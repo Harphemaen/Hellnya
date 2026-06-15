@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
-[ExecuteAlways]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(SpriteRenderer))]
 public class M18Player : MonoBehaviour
@@ -61,9 +60,6 @@ public class M18Player : MonoBehaviour
     private float currentShotAngle;
     private bool isGrounded = true;
     private bool keyboardMissingWarningShown;
-#if UNITY_EDITOR
-    private bool editorRefreshQueued;
-#endif
 
     private void Awake()
     {
@@ -98,7 +94,6 @@ public class M18Player : MonoBehaviour
     private void OnValidate()
     {
         NormalizeSettings();
-        QueueEditorVisualRefresh();
     }
 
     private void Update()
@@ -353,39 +348,6 @@ public class M18Player : MonoBehaviour
 
         spriteRenderer.sortingOrder = sortingOrder;
     }
-
-    private void QueueEditorVisualRefresh()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            ApplyVisualDefaults();
-            return;
-        }
-
-        if (editorRefreshQueued)
-        {
-            return;
-        }
-
-        editorRefreshQueued = true;
-        UnityEditor.EditorApplication.delayCall += ApplyEditorVisualRefresh;
-#endif
-    }
-
-#if UNITY_EDITOR
-    private void ApplyEditorVisualRefresh()
-    {
-        editorRefreshQueued = false;
-
-        if (this == null)
-        {
-            return;
-        }
-
-        ApplyVisualDefaults();
-    }
-#endif
 
     private void LogMissingKeyboardWarningOnce()
     {

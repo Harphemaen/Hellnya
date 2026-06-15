@@ -4,7 +4,6 @@
 
 using UnityEngine;
 
-[ExecuteAlways]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -51,9 +50,6 @@ public class EnemyBase : MonoBehaviour
     protected BoxCollider2D hitBox;
     protected int currentHealth;
     protected float nextShotTime;
-#if UNITY_EDITOR
-    private bool editorRefreshQueued;
-#endif
 
     protected virtual void Awake()
     {
@@ -84,7 +80,6 @@ public class EnemyBase : MonoBehaviour
     protected virtual void OnValidate()
     {
         NormalizeSettings();
-        QueueEditorVisualRefresh();
     }
 
     protected virtual void Update()
@@ -246,39 +241,6 @@ public class EnemyBase : MonoBehaviour
             }
         }
     }
-
-    private void QueueEditorVisualRefresh()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            ApplyEditorVisibleSettings();
-            return;
-        }
-
-        if (editorRefreshQueued)
-        {
-            return;
-        }
-
-        editorRefreshQueued = true;
-        UnityEditor.EditorApplication.delayCall += ApplyEditorVisualRefresh;
-#endif
-    }
-
-#if UNITY_EDITOR
-    private void ApplyEditorVisualRefresh()
-    {
-        editorRefreshQueued = false;
-
-        if (this == null)
-        {
-            return;
-        }
-
-        ApplyEditorVisibleSettings();
-    }
-#endif
 
     private void OnDrawGizmosSelected()
     {

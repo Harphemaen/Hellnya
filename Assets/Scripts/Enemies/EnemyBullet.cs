@@ -4,7 +4,6 @@
 
 using UnityEngine;
 
-[ExecuteAlways]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -27,9 +26,6 @@ public class EnemyBullet : MonoBehaviour
     private BoxCollider2D hitBox;
     private Rigidbody2D body;
     private float lifeTimer;
-#if UNITY_EDITOR
-    private bool editorRefreshQueued;
-#endif
 
     private void Awake()
     {
@@ -55,7 +51,6 @@ public class EnemyBullet : MonoBehaviour
     private void OnValidate()
     {
         NormalizeSettings();
-        QueueEditorVisualRefresh();
     }
 
     private void Update()
@@ -163,39 +158,6 @@ public class EnemyBullet : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
-
-    private void QueueEditorVisualRefresh()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            ApplyVisualDefaults();
-            return;
-        }
-
-        if (editorRefreshQueued)
-        {
-            return;
-        }
-
-        editorRefreshQueued = true;
-        UnityEditor.EditorApplication.delayCall += ApplyEditorVisualRefresh;
-#endif
-    }
-
-#if UNITY_EDITOR
-    private void ApplyEditorVisualRefresh()
-    {
-        editorRefreshQueued = false;
-
-        if (this == null)
-        {
-            return;
-        }
-
-        ApplyVisualDefaults();
-    }
-#endif
 
     private static Sprite GetPlaceholderSprite()
     {

@@ -4,7 +4,6 @@
 
 using UnityEngine;
 
-[ExecuteAlways]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -28,9 +27,6 @@ public class M18Bullet : MonoBehaviour
     private BoxCollider2D boxCollider;
     private Rigidbody2D body;
     private float lifeTimer;
-#if UNITY_EDITOR
-    private bool editorRefreshQueued;
-#endif
 
     private void Awake()
     {
@@ -56,7 +52,6 @@ public class M18Bullet : MonoBehaviour
     private void OnValidate()
     {
         NormalizeSettings();
-        QueueEditorVisualRefresh();
     }
 
     private void Update()
@@ -83,15 +78,6 @@ public class M18Bullet : MonoBehaviour
         lifeTimer = 0f;
         ApplyVisualDefaults();
         FaceMoveDirection();
-    }
-
-    public void SetVisual(Sprite newBulletSprite, Vector2 newPlaceholderSize, Color newPlaceholderColor, int newSortingOrder)
-    {
-        bulletSprite = newBulletSprite;
-        placeholderSize = new Vector2(Mathf.Max(0.01f, newPlaceholderSize.x), Mathf.Max(0.01f, newPlaceholderSize.y));
-        placeholderColor = newPlaceholderColor;
-        sortingOrder = newSortingOrder;
-        ApplyVisualDefaults();
     }
 
     private void NormalizeSettings()
@@ -169,39 +155,6 @@ public class M18Bullet : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
-
-    private void QueueEditorVisualRefresh()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            ApplyVisualDefaults();
-            return;
-        }
-
-        if (editorRefreshQueued)
-        {
-            return;
-        }
-
-        editorRefreshQueued = true;
-        UnityEditor.EditorApplication.delayCall += ApplyEditorVisualRefresh;
-#endif
-    }
-
-#if UNITY_EDITOR
-    private void ApplyEditorVisualRefresh()
-    {
-        editorRefreshQueued = false;
-
-        if (this == null)
-        {
-            return;
-        }
-
-        ApplyVisualDefaults();
-    }
-#endif
 
     private static Sprite GetPlaceholderSprite()
     {

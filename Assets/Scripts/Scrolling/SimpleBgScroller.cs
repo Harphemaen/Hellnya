@@ -4,7 +4,6 @@
 
 using UnityEngine;
 
-[ExecuteAlways]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(SpriteRenderer))]
 public class SimpleBgScroller : MonoBehaviour
@@ -23,9 +22,6 @@ public class SimpleBgScroller : MonoBehaviour
 
     private static Sprite sharedPlaceholderSprite;
     private SpriteRenderer spriteRenderer;
-#if UNITY_EDITOR
-    private bool editorRefreshQueued;
-#endif
 
     private void Awake()
     {
@@ -50,7 +46,6 @@ public class SimpleBgScroller : MonoBehaviour
     private void OnValidate()
     {
         NormalizeSettings();
-        QueueEditorVisualRefresh();
     }
 
     private void Update()
@@ -121,39 +116,6 @@ public class SimpleBgScroller : MonoBehaviour
 
         spriteRenderer.sortingOrder = sortingOrder;
     }
-
-    private void QueueEditorVisualRefresh()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            ApplyVisualDefaults();
-            return;
-        }
-
-        if (editorRefreshQueued)
-        {
-            return;
-        }
-
-        editorRefreshQueued = true;
-        UnityEditor.EditorApplication.delayCall += ApplyEditorVisualRefresh;
-#endif
-    }
-
-#if UNITY_EDITOR
-    private void ApplyEditorVisualRefresh()
-    {
-        editorRefreshQueued = false;
-
-        if (this == null)
-        {
-            return;
-        }
-
-        ApplyVisualDefaults();
-    }
-#endif
 
     private static Sprite GetPlaceholderSprite()
     {
