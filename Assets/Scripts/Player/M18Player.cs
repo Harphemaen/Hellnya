@@ -1,6 +1,6 @@
-// 功能：M18 地面玩家的移动、跳跃、屏幕限制和射击控制。
-// 技术要点：一个玩家对象挂一个脚本；输入使用新版 Input System 直接读取键盘，外观和参数通过 Inspector 配置并在编辑器中实时显示。
-// 版本：v0.3.0
+// 功能：M18 地面玩家的移动、跳跃、屏幕限制和可调角度射击控制。
+// 技术要点：一个玩家对象挂一个脚本；输入使用新版 Input System 直接读取键盘；射击支持主路角度调节和道具增加额外弹路；外观和参数通过 Inspector 配置并在编辑器中实时显示。
+// 版本：v0.4.0
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,7 +14,9 @@ public class M18Player : MonoBehaviour
     [Header("Input")]
     [SerializeField] private Key leftKey = Key.LeftArrow;
     [SerializeField] private Key rightKey = Key.RightArrow;
-    [SerializeField] private Key jumpKey = Key.UpArrow;
+    [SerializeField] private Key aimUpKey = Key.UpArrow;
+    [SerializeField] private Key aimDownKey = Key.DownArrow;
+    [SerializeField] private Key jumpButton = Key.X;
     [SerializeField] private Key attackKey = Key.Z;
 
     [Header("Move")]
@@ -38,8 +40,12 @@ public class M18Player : MonoBehaviour
     [SerializeField] private float bulletSpeed = 8.5f;
     [SerializeField] private float bulletLifeTime = 1.2f;
     [SerializeField] private float baseShotAngle = 0f;
-    [SerializeField] private int bulletWays = 2;
-    [SerializeField] private float spreadAngle = 12f;
+    [SerializeField] private float aimAngleStep = 30f;
+    [SerializeField] private float primaryMaxAngle = 60f;
+    [SerializeField] private int extraBulletWays;
+    [SerializeField] private int maxExtraBulletWays = 1;
+    [SerializeField] private float extraWayAngleOffset = 30f;
+    [SerializeField] private float extraMaxAngle = 90f;
 
     [Header("Visual")]
     [SerializeField] private Sprite playerSprite;
@@ -52,6 +58,7 @@ public class M18Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private float verticalSpeed;
     private float nextFireTime;
+    private float currentShotAngle;
     private bool isGrounded = true;
     private bool keyboardMissingWarningShown;
 #if UNITY_EDITOR
@@ -109,9 +116,10 @@ public class M18Player : MonoBehaviour
         }
 
         float horizontal = ReadHorizontalInput(keyboard);
-        bool jumpPressed = WasPressedThisFrame(keyboard, jumpKey);
+        bool jumpPressed = WasPressedThisFrame(keyboard, jumpButton);
         bool attackHeld = IsPressed(keyboard, attackKey);
 
+        UpdateShotAngle(keyboard);
         Move(horizontal, jumpPressed);
 
         if (attackHeld)
@@ -135,6 +143,19 @@ public class M18Player : MonoBehaviour
         }
 
         return Mathf.Clamp(horizontal, -1f, 1f);
+    }
+
+    private void UpdateShotAngle(Keyboard keyboard)
+    {
+        if (WasPressedThisFrame(keyboard, aimUpKey))
+        {
+            currentShotAngle = Mathf.Min(currentShotAngle + aimAngleStep, GetPrimaryMaxAngle());
+        }
+
+        if (WasPressedThisFrame(keyboard, aimDownKey))
+        {
+            currentShotAngle = Mathf.Max(currentShotAngle - aimAngleStep, baseShotAngle);
+        }
     }
 
     private void Move(float horizontal, bool jumpPressed)
@@ -218,18 +239,24 @@ public class M18Player : MonoBehaviour
 
     private void Fire()
     {
-        int ways = Mathf.Max(1, bulletWays);
         Vector3 spawnPosition = muzzlePoint != null
             ? muzzlePoint.position
             : transform.position + new Vector3(muzzleOffset.x, muzzleOffset.y, 0f);
 
-        for (int i = 0; i < ways; i++)
+        FireBullet(spawnPosition, currentShotAngle);
+
+        for (int i = 1; i <= extraBulletWays; i++)
         {
-            float angle = GetShotAngle(i, ways);
-            Vector2 direction = AngleToDirection(angle);
-            M18Bullet bullet = CreateBullet(spawnPosition);
-            bullet.Init(direction, bulletSpeed, bulletLifeTime);
+            float extraAngle = Mathf.Min(currentShotAngle + extraWayAngleOffset * i, GetExtraMaxAngle());
+            FireBullet(spawnPosition, extraAngle);
         }
+    }
+
+    private void FireBullet(Vector3 spawnPosition, float angle)
+    {
+        Vector2 direction = AngleToDirection(angle);
+        M18Bullet bullet = CreateBullet(spawnPosition);
+        bullet.Init(direction, bulletSpeed, bulletLifeTime);
     }
 
     private M18Bullet CreateBullet(Vector3 spawnPosition)
@@ -244,15 +271,14 @@ public class M18Player : MonoBehaviour
         return bulletObject.AddComponent<M18Bullet>();
     }
 
-    private float GetShotAngle(int index, int ways)
+    public void AddBulletWay(int amount = 1)
     {
-        if (ways <= 1)
-        {
-            return baseShotAngle;
-        }
+        SetExtraBulletWays(extraBulletWays + amount);
+    }
 
-        float t = index / (float)(ways - 1);
-        return baseShotAngle + Mathf.Lerp(-spreadAngle * 0.5f, spreadAngle * 0.5f, t);
+    public void SetExtraBulletWays(int count)
+    {
+        extraBulletWays = Mathf.Clamp(count, 0, maxExtraBulletWays);
     }
 
     private float GetJumpStartSpeed()
@@ -276,8 +302,24 @@ public class M18Player : MonoBehaviour
         shotsPerSecond = Mathf.Max(0.01f, shotsPerSecond);
         bulletSpeed = Mathf.Max(0f, bulletSpeed);
         bulletLifeTime = Mathf.Max(0.01f, bulletLifeTime);
-        bulletWays = Mathf.Max(1, bulletWays);
+        aimAngleStep = Mathf.Max(0.01f, aimAngleStep);
+        primaryMaxAngle = Mathf.Max(0f, primaryMaxAngle);
+        maxExtraBulletWays = Mathf.Max(0, maxExtraBulletWays);
+        extraBulletWays = Mathf.Clamp(extraBulletWays, 0, maxExtraBulletWays);
+        extraWayAngleOffset = Mathf.Max(0f, extraWayAngleOffset);
+        extraMaxAngle = Mathf.Max(primaryMaxAngle, extraMaxAngle);
+        currentShotAngle = Mathf.Clamp(currentShotAngle, baseShotAngle, GetPrimaryMaxAngle());
         placeholderSize = new Vector2(Mathf.Max(0.01f, placeholderSize.x), Mathf.Max(0.01f, placeholderSize.y));
+    }
+
+    private float GetPrimaryMaxAngle()
+    {
+        return baseShotAngle + primaryMaxAngle;
+    }
+
+    private float GetExtraMaxAngle()
+    {
+        return baseShotAngle + extraMaxAngle;
     }
 
     private void CacheComponents()

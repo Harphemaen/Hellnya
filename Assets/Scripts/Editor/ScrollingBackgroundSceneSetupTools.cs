@@ -1,12 +1,14 @@
-// 功能：提供编辑器菜单，快速创建远景、中景、地面三层简易卷轴背景。
-// 技术要点：每层由两个背景块组成，各自挂 SimpleBgScroller；后续直接替换 SpriteRenderer 的 Sprite 即可换图。
-// 版本：v0.2.0
+// 功能：提供编辑器菜单，快速创建远景、中景、地面三层静态长条背景。
+// 技术要点：背景块沿 X 正方向铺开，各自挂 SimpleBgScroller 管理外观；由关卡摄像机移动产生卷轴效果，后续直接替换 SpriteRenderer 的 Sprite 即可换图。
+// 版本：v0.3.0
 
 using UnityEditor;
 using UnityEngine;
 
 public static class ScrollingBackgroundSceneSetupTools
 {
+    private const int DefaultBlockCount = 6;
+
     [MenuItem("SummerBlue/Test Scene/Create Simple Scrolling Background")]
     public static void CreateSimpleScrollingBackground()
     {
@@ -27,8 +29,10 @@ public static class ScrollingBackgroundSceneSetupTools
         Undo.RegisterCreatedObjectUndo(layerRoot, "Create Background Layer");
         layerRoot.transform.SetParent(root);
 
-        CreateBlock(layerRoot.transform, layerName + "_A", 0f, y, speed, sortingOrder, size, color);
-        CreateBlock(layerRoot.transform, layerName + "_B", size.x, y, speed, sortingOrder, size, color);
+        for (int i = 0; i < DefaultBlockCount; i++)
+        {
+            CreateBlock(layerRoot.transform, layerName + "_" + (i + 1).ToString("00"), size.x * i, y, speed, sortingOrder, size, color);
+        }
     }
 
     private static void CreateBlock(Transform parent, string objectName, float x, float y, float speed, int sortingOrder, Vector2 size, Color color)

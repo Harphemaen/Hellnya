@@ -1,6 +1,6 @@
-// 功能：单个背景块的简单横向卷轴与循环归位。
-// 技术要点：背景只作为演出对象移动，不参与关卡逻辑；每个背景块独立配置速度、循环宽度和替换用 Sprite，并在编辑器中实时显示。
-// 版本：v0.3.0
+// 功能：单个背景块的可替换外观和可选横向演出移动。
+// 技术要点：默认背景固定在关卡世界坐标中，由摄像机右移产生卷轴效果；如需独立演出移动，可在 Inspector 开启对象自移动。
+// 版本：v0.4.0
 
 using UnityEngine;
 
@@ -10,6 +10,7 @@ using UnityEngine;
 public class SimpleBgScroller : MonoBehaviour
 {
     [Header("Scroll")]
+    [SerializeField] private bool moveObjectInPlay;
     [SerializeField] private float scrollSpeed = 1f;
     [SerializeField] private float recycleLeftX = -20f;
     [SerializeField] private float recycleDistance = 40f;
@@ -59,8 +60,12 @@ public class SimpleBgScroller : MonoBehaviour
             return;
         }
 
-        transform.position += Vector3.left * scrollSpeed * Time.deltaTime;
+        if (!moveObjectInPlay)
+        {
+            return;
+        }
 
+        transform.position += Vector3.left * scrollSpeed * Time.deltaTime;
         if (transform.position.x <= recycleLeftX)
         {
             transform.position += Vector3.right * recycleDistance;

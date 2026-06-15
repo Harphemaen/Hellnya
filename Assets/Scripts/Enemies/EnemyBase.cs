@@ -1,6 +1,6 @@
-// 功能：敌人基础类别，提供外观、血量、受击碰撞盒、简单左移和基础射击。
-// 技术要点：可直接挂在敌人对象上制作 Prefab；后续特化敌人可以继承本类并覆盖移动或射击逻辑。
-// 版本：v0.1.0
+// 功能：敌人基础类别，提供外观、血量、受击碰撞盒、简单左移、基础射击和出生点初始参数覆盖。
+// 技术要点：可直接挂在敌人对象上制作 Prefab；后续特化敌人可以继承本类并覆盖移动或射击逻辑；出生点可调用公开方法设置初始移动速度。
+// 版本：v0.2.0
 
 using UnityEngine;
 
@@ -167,6 +167,11 @@ public class EnemyBase : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public virtual void SetMoveSpeed(float newMoveSpeed)
+    {
+        moveSpeed = Mathf.Max(0f, newMoveSpeed);
     }
 
     protected virtual void Die()
