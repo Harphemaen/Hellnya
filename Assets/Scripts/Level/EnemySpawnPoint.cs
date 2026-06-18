@@ -8,6 +8,12 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class EnemySpawnPoint : MonoBehaviour
 {
+    public enum TriggerSource
+    {
+        CameraRightEdge,
+        PlayerX
+    }
+
     [System.Serializable]
     public sealed class EnemySpawnEntry
     {
@@ -54,15 +60,10 @@ public class EnemySpawnPoint : MonoBehaviour
             get { return Mathf.Max(0f, moveSpeed); }
         }
 
-        public void Normalize()
-        {
-            count = Mathf.Max(1, count);
-            spawnInterval = Mathf.Max(0f, spawnInterval);
-            moveSpeed = Mathf.Max(0f, moveSpeed);
-        }
     }
 
     [Header("Trigger")]
+    [SerializeField] private TriggerSource triggerSource;
     [SerializeField] private bool useTransformXAsTrigger = true;
     [SerializeField] private float triggerX;
 
@@ -95,8 +96,6 @@ public class EnemySpawnPoint : MonoBehaviour
         {
             triggerX = transform.position.x;
         }
-
-        NormalizeEntries();
     }
 
     public void ResetTrigger()
@@ -112,18 +111,28 @@ public class EnemySpawnPoint : MonoBehaviour
 
     public bool TryTrigger(float cameraRightEdgeX)
     {
+        return TryTrigger(cameraRightEdgeX, float.NegativeInfinity);
+    }
+
+    public bool TryTrigger(float cameraRightEdgeX, float playerX)
+    {
         if (hasTriggered)
         {
             return false;
         }
 
-        if (cameraRightEdgeX < TriggerX)
+        if (GetTriggerValue(cameraRightEdgeX, playerX) < TriggerX)
         {
             return false;
         }
 
         Trigger();
         return true;
+    }
+
+    private float GetTriggerValue(float cameraRightEdgeX, float playerX)
+    {
+        return triggerSource == TriggerSource.PlayerX ? playerX : cameraRightEdgeX;
     }
 
     public void Trigger()
@@ -208,22 +217,6 @@ public class EnemySpawnPoint : MonoBehaviour
         enemyObject.AddComponent<SpriteRenderer>();
         enemyObject.AddComponent<BoxCollider2D>();
         return enemyObject.AddComponent<EnemyBase>();
-    }
-
-    private void NormalizeEntries()
-    {
-        if (enemies == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < enemies.Length; i++)
-        {
-            if (enemies[i] != null)
-            {
-                enemies[i].Normalize();
-            }
-        }
     }
 
     private void OnDrawGizmos()

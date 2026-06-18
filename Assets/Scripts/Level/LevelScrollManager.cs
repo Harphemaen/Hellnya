@@ -21,6 +21,7 @@ public class LevelScrollManager : MonoBehaviour
     [Header("Spawn Points")]
     [SerializeField] private bool autoFindSpawnPoints = true;
     [SerializeField] private EnemySpawnPoint[] spawnPoints = new EnemySpawnPoint[0];
+    [SerializeField] private Transform player;
 
     public float CameraRightEdgeX
     {
@@ -49,6 +50,7 @@ public class LevelScrollManager : MonoBehaviour
             RefreshSpawnPoints();
         }
 
+        ResolvePlayer();
         ResetSpawnPoints();
     }
 
@@ -108,12 +110,14 @@ public class LevelScrollManager : MonoBehaviour
             return;
         }
 
+        ResolvePlayer();
         float rightEdgeX = GetCameraRightEdgeX();
+        float playerX = player != null ? player.position.x : float.NegativeInfinity;
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             if (spawnPoints[i] != null)
             {
-                spawnPoints[i].TryTrigger(rightEdgeX);
+                spawnPoints[i].TryTrigger(rightEdgeX, playerX);
             }
         }
     }
@@ -139,6 +143,20 @@ public class LevelScrollManager : MonoBehaviour
         if (targetCamera == null)
         {
             targetCamera = Camera.main;
+        }
+    }
+
+    private void ResolvePlayer()
+    {
+        if (player != null)
+        {
+            return;
+        }
+
+        M18Player foundPlayer = FindObjectOfType<M18Player>();
+        if (foundPlayer != null)
+        {
+            player = foundPlayer.transform;
         }
     }
 

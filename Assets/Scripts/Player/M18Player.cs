@@ -58,6 +58,8 @@ public class M18Player : MonoBehaviour
     private float verticalSpeed;
     private float nextFireTime;
     private float currentShotAngle;
+    private float lastCameraX;
+    private bool hasLastCameraX;
     private bool isGrounded = true;
     private bool keyboardMissingWarningShown;
 
@@ -89,6 +91,12 @@ public class M18Player : MonoBehaviour
     {
         CacheComponents();
         ApplyVisualDefaults();
+        ResetCameraFollow();
+    }
+
+    private void Start()
+    {
+        ResetCameraFollow();
     }
 
     private void OnValidate()
@@ -113,9 +121,10 @@ public class M18Player : MonoBehaviour
         float horizontal = ReadHorizontalInput(keyboard);
         bool jumpPressed = WasPressedThisFrame(keyboard, jumpButton);
         bool attackHeld = IsPressed(keyboard, attackKey);
+        float cameraDeltaX = GetCameraDeltaX();
 
         UpdateShotAngle(keyboard);
-        Move(horizontal, jumpPressed);
+        Move(horizontal, jumpPressed, cameraDeltaX);
 
         if (attackHeld)
         {
@@ -153,7 +162,7 @@ public class M18Player : MonoBehaviour
         }
     }
 
-    private void Move(float horizontal, bool jumpPressed)
+    private void Move(float horizontal, bool jumpPressed, float cameraDeltaX)
     {
         if (jumpPressed && isGrounded)
         {
@@ -162,6 +171,7 @@ public class M18Player : MonoBehaviour
         }
 
         Vector3 nextPosition = transform.position;
+        nextPosition.x += cameraDeltaX;
         nextPosition.x += horizontal * moveSpeed * Time.deltaTime;
 
         if (isGrounded)
@@ -323,6 +333,29 @@ public class M18Player : MonoBehaviour
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
+    }
+
+    private void ResetCameraFollow()
+    {
+        Camera cameraToUse = targetCamera != null ? targetCamera : Camera.main;
+        hasLastCameraX = cameraToUse != null;
+        lastCameraX = hasLastCameraX ? cameraToUse.transform.position.x : 0f;
+    }
+
+    private float GetCameraDeltaX()
+    {
+        Camera cameraToUse = targetCamera != null ? targetCamera : Camera.main;
+        if (cameraToUse == null)
+        {
+            hasLastCameraX = false;
+            return 0f;
+        }
+
+        float cameraX = cameraToUse.transform.position.x;
+        float deltaX = hasLastCameraX ? cameraX - lastCameraX : 0f;
+        lastCameraX = cameraX;
+        hasLastCameraX = true;
+        return deltaX;
     }
 
     private void ApplyVisualDefaults()
