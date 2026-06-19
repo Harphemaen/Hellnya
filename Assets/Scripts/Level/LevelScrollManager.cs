@@ -1,5 +1,6 @@
 // 功能：关卡卷轴管理器，控制摄像机沿 X 正方向匀速移动，并按摄像机右边缘触发敌人出生点。
 // 技术要点：挂在独立 LevelManager 对象上；摄像机移动早于玩家 Update，玩家继续使用摄像机视口限制活动范围；出生点可自动查找或手动配置。
+// 配置：targetCamera 摄像机；moveCamera 是否推进；setCameraToLevelStartOnPlay 是否开局放到起点；levelStartX/EndX 关卡范围；scrollSpeed 卷轴速度；stopAtLevelEnd 是否停在终点；spawnPoints 出生点；player 玩家引用。
 // 版本：v0.1.0
 
 using System;
@@ -25,13 +26,14 @@ public class LevelScrollManager : MonoBehaviour
 
     public float CameraRightEdgeX
     {
-        get { return GetCameraRightEdgeX(); }
+        get { return GameWorldContext.CameraRightEdgeX; }
     }
 
     private void Awake()
     {
         NormalizeSettings();
         ResolveCamera();
+        GameWorldContext.SetCamera(targetCamera);
     }
 
     private void Start()
@@ -51,6 +53,7 @@ public class LevelScrollManager : MonoBehaviour
         }
 
         ResolvePlayer();
+        GameWorldContext.SetPlayer(player);
         ResetSpawnPoints();
     }
 
@@ -111,8 +114,10 @@ public class LevelScrollManager : MonoBehaviour
         }
 
         ResolvePlayer();
-        float rightEdgeX = GetCameraRightEdgeX();
-        float playerX = player != null ? player.position.x : float.NegativeInfinity;
+        GameWorldContext.SetCamera(targetCamera);
+        GameWorldContext.SetPlayer(player);
+        float rightEdgeX = GameWorldContext.CameraRightEdgeX;
+        float playerX = GameWorldContext.PlayerX;
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             if (spawnPoints[i] != null)
@@ -144,12 +149,15 @@ public class LevelScrollManager : MonoBehaviour
         {
             targetCamera = Camera.main;
         }
+
+        GameWorldContext.SetCamera(targetCamera);
     }
 
     private void ResolvePlayer()
     {
         if (player != null)
         {
+            GameWorldContext.SetPlayer(player);
             return;
         }
 
@@ -158,20 +166,8 @@ public class LevelScrollManager : MonoBehaviour
         {
             player = foundPlayer.transform;
         }
-    }
 
-    private float GetCameraRightEdgeX()
-    {
-        ResolveCamera();
-
-        if (targetCamera == null)
-        {
-            return transform.position.x;
-        }
-
-        float distanceFromCamera = Mathf.Abs(0f - targetCamera.transform.position.z);
-        Vector3 worldRight = targetCamera.ViewportToWorldPoint(new Vector3(1f, 0.5f, distanceFromCamera));
-        return worldRight.x;
+        GameWorldContext.SetPlayer(player);
     }
 
     private void NormalizeSettings()

@@ -1,5 +1,6 @@
 // 功能：M18 玩家子弹的基础飞行与生命周期控制。
 // 技术要点：对象自身在 Play 模式按方向移动，到达飞行时间后销毁；编辑模式下也会显示可配置占位图。
+// 配置：direction 初始方向；speed 速度；lifeTime 存活时间；bulletSprite 外观；createPlaceholderWhenSpriteMissing 是否生成占位图；placeholderSize/Color 占位图；sortingOrder 层级。
 // 版本：v0.3.0
 
 using UnityEngine;

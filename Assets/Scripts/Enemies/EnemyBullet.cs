@@ -1,5 +1,6 @@
 // 功能：敌人子弹的基础飞行与生命周期控制。
 // 技术要点：由敌人脚本生成并初始化方向、速度、生命周期和外观；编辑模式下可直接看到占位图。
+// 配置：direction 初始方向；speed 速度；lifeTime 存活时间；bulletSprite 外观；sortingOrder 层级。
 // 版本：v0.1.0
 
 using UnityEngine;
@@ -17,11 +18,8 @@ public class EnemyBullet : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private Sprite bulletSprite;
-    [SerializeField] private Vector2 placeholderSize = new Vector2(0.18f, 0.08f);
-    [SerializeField] private Color placeholderColor = new Color(1f, 0.35f, 0.2f, 1f);
     [SerializeField] private int sortingOrder = 15;
 
-    private static Sprite sharedPlaceholderSprite;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D hitBox;
     private Rigidbody2D body;
@@ -69,14 +67,12 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    public void Init(Vector2 newDirection, float newSpeed, float newLifeTime, Sprite newBulletSprite, Vector2 newPlaceholderSize, Color newPlaceholderColor, int newSortingOrder)
+    public void Init(Vector2 newDirection, float newSpeed, float newLifeTime, Sprite newBulletSprite, int newSortingOrder)
     {
         direction = newDirection.sqrMagnitude > 0.0001f ? newDirection.normalized : Vector2.left;
         speed = Mathf.Max(0f, newSpeed);
         lifeTime = Mathf.Max(0.01f, newLifeTime);
         bulletSprite = newBulletSprite;
-        placeholderSize = new Vector2(Mathf.Max(0.01f, newPlaceholderSize.x), Mathf.Max(0.01f, newPlaceholderSize.y));
-        placeholderColor = newPlaceholderColor;
         sortingOrder = newSortingOrder;
         lifeTimer = 0f;
         ApplyVisualDefaults();
@@ -88,7 +84,6 @@ public class EnemyBullet : MonoBehaviour
         direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.left;
         speed = Mathf.Max(0f, speed);
         lifeTime = Mathf.Max(0.01f, lifeTime);
-        placeholderSize = new Vector2(Mathf.Max(0.01f, placeholderSize.x), Mathf.Max(0.01f, placeholderSize.y));
     }
 
     private void CacheComponents()
@@ -133,18 +128,8 @@ public class EnemyBullet : MonoBehaviour
     {
         CacheComponents();
 
-        if (bulletSprite != null)
-        {
-            spriteRenderer.sprite = bulletSprite;
-            spriteRenderer.color = Color.white;
-        }
-        else
-        {
-            spriteRenderer.sprite = GetPlaceholderSprite();
-            spriteRenderer.color = placeholderColor;
-            transform.localScale = new Vector3(placeholderSize.x, placeholderSize.y, 1f);
-        }
-
+        spriteRenderer.sprite = bulletSprite;
+        spriteRenderer.color = Color.white;
         spriteRenderer.sortingOrder = sortingOrder;
     }
 
@@ -159,20 +144,4 @@ public class EnemyBullet : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    private static Sprite GetPlaceholderSprite()
-    {
-        if (sharedPlaceholderSprite != null)
-        {
-            return sharedPlaceholderSprite;
-        }
-
-        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-        texture.hideFlags = HideFlags.HideAndDontSave;
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        sharedPlaceholderSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
-        sharedPlaceholderSprite.hideFlags = HideFlags.HideAndDontSave;
-        return sharedPlaceholderSprite;
-    }
 }

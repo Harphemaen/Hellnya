@@ -1,5 +1,6 @@
 // 功能：敌人出生点，当摄像机右边缘到达触发 X 坐标时生成配置好的敌人或敌人组。
-// 技术要点：挂在场景空对象上作为关卡开关；每个条目可配置敌人 Prefab、数量、队形偏移、生成间隔和初始移动速度覆盖。
+// 技术要点：挂在场景空对象上作为关卡开关；生成器只负责延迟、数量和队列，敌人行为由 Prefab 自己的脚本决定。
+// 配置：triggerSource 用摄像机右缘或玩家 X 触发；useTransformXAsTrigger/triggerX 触发坐标；spawnDelay 触发后的生成延迟；spawnInterval 队列中每个敌人的间隔；spawnParent 生成父节点；enemies 配置 Prefab 和数量。
 // 版本：v0.1.0
 
 using System.Collections;
@@ -19,11 +20,6 @@ public class EnemySpawnPoint : MonoBehaviour
     {
         [SerializeField] private EnemyBase enemyPrefab;
         [SerializeField] private int count = 1;
-        [SerializeField] private Vector2 firstSpawnOffset = Vector2.zero;
-        [SerializeField] private Vector2 spacing = new Vector2(0f, -0.6f);
-        [SerializeField] private float spawnInterval = 0f;
-        [SerializeField] private bool overrideMoveSpeed;
-        [SerializeField] private float moveSpeed = 1.2f;
 
         public EnemyBase EnemyPrefab
         {
@@ -35,31 +31,6 @@ public class EnemySpawnPoint : MonoBehaviour
             get { return Mathf.Max(1, count); }
         }
 
-        public Vector2 FirstSpawnOffset
-        {
-            get { return firstSpawnOffset; }
-        }
-
-        public Vector2 Spacing
-        {
-            get { return spacing; }
-        }
-
-        public float SpawnInterval
-        {
-            get { return Mathf.Max(0f, spawnInterval); }
-        }
-
-        public bool OverrideMoveSpeed
-        {
-            get { return overrideMoveSpeed; }
-        }
-
-        public float MoveSpeed
-        {
-            get { return Mathf.Max(0f, moveSpeed); }
-        }
-
     }
 
     [Header("Trigger")]
@@ -68,6 +39,8 @@ public class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private float triggerX;
 
     [Header("Spawn")]
+    [SerializeField] private float spawnDelay;
+    [SerializeField] private float spawnInterval = 0.25f;
     [SerializeField] private Transform spawnParent;
     [SerializeField] private EnemySpawnEntry[] enemies = new EnemySpawnEntry[] { new EnemySpawnEntry() };
 
@@ -159,11 +132,19 @@ public class EnemySpawnPoint : MonoBehaviour
 
     private IEnumerator SpawnRoutine()
     {
+        float safeSpawnDelay = Mathf.Max(0f, spawnDelay);
+        if (safeSpawnDelay > 0f)
+        {
+            yield return new WaitForSeconds(safeSpawnDelay);
+        }
+
         if (enemies == null)
         {
             yield break;
         }
 
+        bool spawnedAny = false;
+        float safeSpawnInterval = Mathf.Max(0f, spawnInterval);
         for (int entryIndex = 0; entryIndex < enemies.Length; entryIndex++)
         {
             EnemySpawnEntry entry = enemies[entryIndex];
@@ -174,36 +155,31 @@ public class EnemySpawnPoint : MonoBehaviour
 
             for (int enemyIndex = 0; enemyIndex < entry.Count; enemyIndex++)
             {
-                SpawnOne(entry, enemyIndex);
-
-                if (entry.SpawnInterval > 0f)
+                if (spawnedAny && safeSpawnInterval > 0f)
                 {
-                    yield return new WaitForSeconds(entry.SpawnInterval);
+                    yield return new WaitForSeconds(safeSpawnInterval);
                 }
+
+                SpawnOne(entry);
+                spawnedAny = true;
             }
         }
 
         spawnRoutine = null;
     }
 
-    private void SpawnOne(EnemySpawnEntry entry, int enemyIndex)
+    private void SpawnOne(EnemySpawnEntry entry)
     {
-        Vector2 localOffset = entry.FirstSpawnOffset + entry.Spacing * enemyIndex;
-        Vector3 spawnPosition = transform.position + new Vector3(localOffset.x, localOffset.y, 0f);
         Transform parent = spawnParent != null ? spawnParent : null;
-        EnemyBase enemy = CreateEnemy(entry.EnemyPrefab, spawnPosition, parent);
-
-        if (entry.OverrideMoveSpeed)
-        {
-            enemy.SetMoveSpeed(entry.MoveSpeed);
-        }
+        CreateEnemy(entry.EnemyPrefab, transform.position, parent);
     }
 
-    private EnemyBase CreateEnemy(EnemyBase prefab, Vector3 spawnPosition, Transform parent)
+    private void CreateEnemy(EnemyBase prefab, Vector3 spawnPosition, Transform parent)
     {
         if (prefab != null)
         {
-            return Instantiate(prefab, spawnPosition, Quaternion.identity, parent);
+            Instantiate(prefab, spawnPosition, Quaternion.identity, parent);
+            return;
         }
 
         GameObject enemyObject = new GameObject("Enemy_Spawned");
@@ -216,7 +192,7 @@ public class EnemySpawnPoint : MonoBehaviour
 
         enemyObject.AddComponent<SpriteRenderer>();
         enemyObject.AddComponent<BoxCollider2D>();
-        return enemyObject.AddComponent<EnemyBase>();
+        enemyObject.AddComponent<EnemyBase>();
     }
 
     private void OnDrawGizmos()

@@ -1,5 +1,6 @@
 // 功能：单个背景块的可替换外观和可选横向演出移动。
 // 技术要点：默认背景固定在关卡世界坐标中，由摄像机右移产生卷轴效果；如需独立演出移动，可在 Inspector 开启对象自移动。
+// 配置：moveObjectInPlay 是否自移动；scrollSpeed 自移动速度；recycleLeftX/recycleDistance 循环位置；backgroundSprite 外观；placeholderSize/Color 占位图；sortingOrder 层级。
 // 版本：v0.4.0
 
 using UnityEngine;

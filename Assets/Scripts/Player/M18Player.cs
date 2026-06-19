@@ -1,5 +1,6 @@
 // 功能：M18 地面玩家的移动、跳跃、屏幕限制和可调角度射击控制。
 // 技术要点：一个玩家对象挂一个脚本；输入使用新版 Input System 直接读取键盘；射击支持主路角度调节和道具增加额外弹路；外观和参数通过 Inspector 配置并在编辑器中实时显示。
+// 配置：left/right/aim/jump/attack 按键；moveSpeed 移动速度；targetCamera/viewportMin/Max 屏幕限制；jumpHeight/airTime/fallSpeed 跳跃；bulletPrefab/muzzle/shotsPerSecond/bulletSpeed/bulletLifeTime 射击；aimAngle/extraBulletWays 弹路；playerSprite/placeholder/sortingOrder 外观。
 // 版本：v0.4.0
 
 using UnityEngine;
