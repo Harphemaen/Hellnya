@@ -19,6 +19,7 @@ public class M18Bullet : MonoBehaviour
     [Header("Death Animation")]
     [SerializeField] private GameObject deathAnimationPrefab;
     [SerializeField] private float deathAnimationLifeTime = 1f;
+    [SerializeField] private LayerMask terrainLayers;
 
     private BoxCollider2D boxCollider;
     private Rigidbody2D body;
@@ -64,6 +65,14 @@ public class M18Bullet : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (IsTerrain(other))
+        {
+            DestroyByHit();
+        }
+    }
+
     public void Init(Vector2 newDirection, float newSpeed, float newLifeTime)
     {
         direction = newDirection.sqrMagnitude > 0.0001f ? newDirection.normalized : Vector2.right;
@@ -93,6 +102,11 @@ public class M18Bullet : MonoBehaviour
         speed = Mathf.Max(0f, speed);
         lifeTime = Mathf.Max(0.01f, lifeTime);
         deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
+
+        if (terrainLayers.value == 0)
+        {
+            terrainLayers = LayerMask.GetMask("Terrain");
+        }
     }
 
     private void CacheComponents()
@@ -146,5 +160,10 @@ public class M18Bullet : MonoBehaviour
         {
             Destroy(effect, deathAnimationLifeTime);
         }
+    }
+
+    private bool IsTerrain(Collider2D other)
+    {
+        return other != null && (terrainLayers.value & (1 << other.gameObject.layer)) != 0;
     }
 }

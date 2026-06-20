@@ -124,14 +124,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   destroyWhenHealthZero: 1
-  deathAnimationPrefab: {fileID: 0}
-  deathAnimationLifeTime: 1
+  deathAnimationPrefab: {fileID: 100000, guid: a8fd6302e95f47e6a23c271edc7ac101, type: 3}
+  deathAnimationLifeTime: 0.6
   moveSpeed: 1.2
   autoConfigureHitBox: 1
   hitBoxSize: {x: 0.9, y: 0.7}
   hitBoxOffset: {x: 0, y: 0}
   canShoot: 0
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 114000, guid: c3bf2605020c49229f34b9338dd9a0bc, type: 3}
   muzzlePoint: {fileID: 0}
   muzzleOffset: {x: -0.6, y: 0}
   bulletSpeed: 4

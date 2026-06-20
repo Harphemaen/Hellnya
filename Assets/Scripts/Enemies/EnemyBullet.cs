@@ -19,6 +19,7 @@ public class EnemyBullet : MonoBehaviour
     [Header("Death Animation")]
     [SerializeField] private GameObject deathAnimationPrefab;
     [SerializeField] private float deathAnimationLifeTime = 1f;
+    [SerializeField] private LayerMask terrainLayers;
 
     private BoxCollider2D hitBox;
     private Rigidbody2D body;
@@ -66,6 +67,12 @@ public class EnemyBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (IsTerrain(other))
+        {
+            DestroyByHit();
+            return;
+        }
+
         M18Player player = other.GetComponent<M18Player>();
         if (player == null)
         {
@@ -107,6 +114,11 @@ public class EnemyBullet : MonoBehaviour
         speed = Mathf.Max(0f, speed);
         lifeTime = Mathf.Max(0.01f, lifeTime);
         deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
+
+        if (terrainLayers.value == 0)
+        {
+            terrainLayers = LayerMask.GetMask("Terrain");
+        }
     }
 
     private void CacheComponents()
@@ -160,5 +172,10 @@ public class EnemyBullet : MonoBehaviour
         {
             Destroy(effect, deathAnimationLifeTime);
         }
+    }
+
+    private bool IsTerrain(Collider2D other)
+    {
+        return other != null && (terrainLayers.value & (1 << other.gameObject.layer)) != 0;
     }
 }
