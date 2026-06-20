@@ -1,7 +1,7 @@
-// 功能：单个背景块的可替换外观和可选横向演出移动。
-// 技术要点：默认背景固定在关卡世界坐标中，由摄像机右移产生卷轴效果；如需独立演出移动，可在 Inspector 开启对象自移动。
-// 配置：moveObjectInPlay 是否自移动；scrollSpeed 自移动速度；recycleLeftX/recycleDistance 循环位置；backgroundSprite 外观；placeholderSize/Color 占位图；sortingOrder 层级。
-// 版本：v0.4.0
+// 功能：让一个背景对象可选地横向自移动，并在越过左边界后循环到右侧。
+// 技术要点：外观交给对象自己的 SpriteRenderer；本脚本只负责位移和循环。
+// 配置：moveObjectInPlay 是否自移动；scrollSpeed 自移动速度；recycleLeftX/recycleDistance 循环位置。
+// 版本：0.5.0
 
 using UnityEngine;
 
@@ -15,33 +15,14 @@ public class SimpleBgScroller : MonoBehaviour
     [SerializeField] private float recycleLeftX = -20f;
     [SerializeField] private float recycleDistance = 40f;
 
-    [Header("Visual")]
-    [SerializeField] private Sprite backgroundSprite;
-    [SerializeField] private Vector2 placeholderSize = new Vector2(20f, 5f);
-    [SerializeField] private Color placeholderColor = Color.white;
-    [SerializeField] private int sortingOrder = -20;
-
-    private static Sprite sharedPlaceholderSprite;
-    private SpriteRenderer spriteRenderer;
-
     private void Awake()
     {
         NormalizeSettings();
-        CacheComponents();
-        ApplyVisualDefaults();
     }
 
     private void Reset()
     {
         NormalizeSettings();
-        CacheComponents();
-        ApplyVisualDefaults();
-    }
-
-    private void OnEnable()
-    {
-        CacheComponents();
-        ApplyVisualDefaults();
     }
 
     private void OnValidate()
@@ -68,70 +49,16 @@ public class SimpleBgScroller : MonoBehaviour
         }
     }
 
-    public void Configure(float newScrollSpeed, float newRecycleLeftX, float newRecycleDistance, Vector2 newSize, Color newColor, int newSortingOrder)
+    public void Configure(float newScrollSpeed, float newRecycleLeftX, float newRecycleDistance)
     {
         scrollSpeed = Mathf.Max(0f, newScrollSpeed);
         recycleLeftX = newRecycleLeftX;
         recycleDistance = Mathf.Max(0.01f, newRecycleDistance);
-        placeholderSize = new Vector2(Mathf.Max(0.01f, newSize.x), Mathf.Max(0.01f, newSize.y));
-        placeholderColor = newColor;
-        sortingOrder = newSortingOrder;
-        ApplyVisualDefaults();
     }
 
     private void NormalizeSettings()
     {
         scrollSpeed = Mathf.Max(0f, scrollSpeed);
         recycleDistance = Mathf.Max(0.01f, recycleDistance);
-        placeholderSize = new Vector2(Mathf.Max(0.01f, placeholderSize.x), Mathf.Max(0.01f, placeholderSize.y));
-    }
-
-    private void CacheComponents()
-    {
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
-    }
-
-    public void ApplyVisualDefaults()
-    {
-        CacheComponents();
-
-        if (spriteRenderer == null)
-        {
-            return;
-        }
-
-        if (backgroundSprite != null)
-        {
-            spriteRenderer.sprite = backgroundSprite;
-            spriteRenderer.color = Color.white;
-        }
-        else
-        {
-            spriteRenderer.sprite = GetPlaceholderSprite();
-            spriteRenderer.color = placeholderColor;
-            transform.localScale = new Vector3(placeholderSize.x, placeholderSize.y, 1f);
-        }
-
-        spriteRenderer.sortingOrder = sortingOrder;
-    }
-
-    private static Sprite GetPlaceholderSprite()
-    {
-        if (sharedPlaceholderSprite != null)
-        {
-            return sharedPlaceholderSprite;
-        }
-
-        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-        texture.hideFlags = HideFlags.HideAndDontSave;
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        sharedPlaceholderSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
-        sharedPlaceholderSprite.hideFlags = HideFlags.HideAndDontSave;
-        return sharedPlaceholderSprite;
     }
 }

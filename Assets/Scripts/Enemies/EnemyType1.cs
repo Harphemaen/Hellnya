@@ -1,7 +1,7 @@
 // 功能：敌人类型 1，飞到当前屏幕的指定位置，短暂停留并可射击一次，然后向左飞出。
 // 技术要点：继承 EnemyBase；停止点使用 viewport 坐标，每帧换算成当前摄像机下的世界坐标，避免摄像机移动导致追旧坐标。
 // 配置：flySpeed 飞行速度；stopScreenPosition 停止点 viewport 坐标(0-1)；useRandomStopScreenPosition/randomStopScreenMin/Max 随机停止区域；stopSeconds 停留时间；shootOnStop 停住时是否左斜下射击一次。
-// 版本：0.2.0
+// 版本：0.3.0
 
 using UnityEngine;
 
@@ -123,12 +123,7 @@ public class EnemyType1 : EnemyBase
             : transform.position + new Vector3(muzzleOffset.x, muzzleOffset.y, 0f);
 
         EnemyBullet bullet = CreateBullet(spawnPosition);
-        bullet.Init(
-            AngleToDirection(StopShotAngle),
-            bulletSpeed,
-            bulletLifeTime,
-            bulletSprite,
-            bulletSortingOrder);
+        bullet.Init(AngleToDirection(StopShotAngle), bulletSpeed, bulletLifeTime);
     }
 
     private Vector3 GetCurrentStopWorldPosition()

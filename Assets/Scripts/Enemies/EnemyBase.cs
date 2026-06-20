@@ -1,7 +1,7 @@
-// 功能：敌人基础类别，提供外观、血量、受击碰撞盒、简单左移、基础射击和左屏外销毁。
-// 技术要点：可直接挂在敌人对象上制作 Prefab；后续特化敌人可以继承本类并覆盖移动或射击逻辑。
-// 配置：enemySprite 外观；sortingOrder 层级；maxHealth 血量；destroyWhenHealthZero 是否死亡销毁；moveSpeed 默认左移速度；hitBoxSize/Offset 碰撞盒；canShoot/shotInterval/shotAngle 射击；bulletPrefab/bulletSpeed/bulletLifeTime/bulletSprite 子弹。
-// 版本：v0.2.0
+// 功能：敌人基础类别，提供血量、受击、碰撞盒、简单左移、基础射击、死亡动画和左屏外销毁。
+// 技术要点：外观交给对象自己的 SpriteRenderer；特化敌人继承本类并覆盖移动或射击逻辑。
+// 配置：maxHealth 血量；destroyWhenHealthZero 是否死亡销毁；deathAnimationPrefab 死亡动画；moveSpeed 默认左移速度；hitBoxSize/Offset 碰撞盒；canShoot/shotInterval/shotAngle 射击；bulletPrefab/bulletSpeed/bulletLifeTime 子弹。
+// 版本：0.3.0
 
 using UnityEngine;
 
@@ -12,13 +12,11 @@ public class EnemyBase : MonoBehaviour
 {
     private const float DestroyAfterLeftScreenSeconds = 2f;
 
-    [Header("Visual")]
-    [SerializeField] protected Sprite enemySprite;
-    [SerializeField] protected int sortingOrder = 8;
-
     [Header("Health")]
     [SerializeField] protected int maxHealth = 1;
     [SerializeField] protected bool destroyWhenHealthZero = true;
+    [SerializeField] protected GameObject deathAnimationPrefab;
+    [SerializeField] protected float deathAnimationLifeTime = 1f;
 
     [Header("Move")]
     [SerializeField] protected float moveSpeed = 1.2f;
@@ -40,11 +38,6 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected float initialShotDelay = 0.5f;
     [SerializeField] protected float shotAngle = 180f;
 
-    [Header("Shot Visual")]
-    [SerializeField] protected Sprite bulletSprite;
-    [SerializeField] protected int bulletSortingOrder = 15;
-
-    protected SpriteRenderer spriteRenderer;
     protected BoxCollider2D hitBox;
     protected int currentHealth;
     protected float nextShotTime;
@@ -54,7 +47,7 @@ public class EnemyBase : MonoBehaviour
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyEditorVisibleSettings();
+        ApplyColliderSettings();
 
         if (Application.isPlaying)
         {
@@ -67,13 +60,13 @@ public class EnemyBase : MonoBehaviour
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyEditorVisibleSettings();
+        ApplyColliderSettings();
     }
 
     protected virtual void OnEnable()
     {
         CacheComponents();
-        ApplyEditorVisibleSettings();
+        ApplyColliderSettings();
     }
 
     protected virtual void OnValidate()
@@ -125,12 +118,7 @@ public class EnemyBase : MonoBehaviour
             : transform.position + new Vector3(muzzleOffset.x, muzzleOffset.y, 0f);
 
         EnemyBullet bullet = CreateBullet(spawnPosition);
-        bullet.Init(
-            AngleToDirection(shotAngle),
-            bulletSpeed,
-            bulletLifeTime,
-            bulletSprite,
-            bulletSortingOrder);
+        bullet.Init(AngleToDirection(shotAngle), bulletSpeed, bulletLifeTime);
     }
 
     protected virtual EnemyBullet CreateBullet(Vector3 spawnPosition)
@@ -153,8 +141,10 @@ public class EnemyBase : MonoBehaviour
             return;
         }
 
-        Destroy(playerBullet.gameObject);
-        TakeDamage(1);
+        if (playerBullet.DestroyByHit())
+        {
+            TakeDamage(1);
+        }
     }
 
     public virtual void TakeDamage(int damage)
@@ -175,6 +165,7 @@ public class EnemyBase : MonoBehaviour
     {
         if (destroyWhenHealthZero)
         {
+            SpawnDeathAnimation();
             Destroy(gameObject);
         }
     }
@@ -209,6 +200,7 @@ public class EnemyBase : MonoBehaviour
     protected void NormalizeSettings()
     {
         maxHealth = Mathf.Max(1, maxHealth);
+        deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
         moveSpeed = Mathf.Max(0f, moveSpeed);
         hitBoxSize = new Vector2(Mathf.Max(0.01f, hitBoxSize.x), Mathf.Max(0.01f, hitBoxSize.y));
         bulletSpeed = Mathf.Max(0f, bulletSpeed);
@@ -220,37 +212,40 @@ public class EnemyBase : MonoBehaviour
 
     protected void CacheComponents()
     {
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
-
         if (hitBox == null)
         {
             hitBox = GetComponent<BoxCollider2D>();
         }
     }
 
-    protected void ApplyEditorVisibleSettings()
+    protected void ApplyColliderSettings()
     {
         CacheComponents();
 
-        if (spriteRenderer != null)
+        if (hitBox == null)
         {
-            spriteRenderer.sprite = enemySprite;
-            spriteRenderer.color = Color.white;
-            spriteRenderer.sortingOrder = sortingOrder;
+            return;
         }
 
-        if (hitBox != null)
+        hitBox.isTrigger = true;
+        if (autoConfigureHitBox)
         {
-            hitBox.isTrigger = true;
+            hitBox.size = hitBoxSize;
+            hitBox.offset = hitBoxOffset;
+        }
+    }
 
-            if (autoConfigureHitBox)
-            {
-                hitBox.size = hitBoxSize;
-                hitBox.offset = hitBoxOffset;
-            }
+    protected void SpawnDeathAnimation()
+    {
+        if (deathAnimationPrefab == null)
+        {
+            return;
+        }
+
+        GameObject effect = Instantiate(deathAnimationPrefab, transform.position, transform.rotation);
+        if (deathAnimationLifeTime > 0f)
+        {
+            Destroy(effect, deathAnimationLifeTime);
         }
     }
 
@@ -270,6 +265,7 @@ public class EnemyBase : MonoBehaviour
         return new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
     }
 }
+
 // 功能：集中提供当前摄像机、玩家位置和屏幕坐标换算。
 // 技术要点：LevelScrollManager 写入当前场景引用，其他脚本只读取；缺引用时退回 Camera.main / M18Player。
 // 配置：无。

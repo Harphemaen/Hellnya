@@ -1,0 +1,744 @@
+fileFormatVersion: 2
+guid: cef8cda7804d0cc418a9de519d16e99f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3635085755289524570
+    second: M18GUN_test_0
+  - first:
+      213: -3032203782862508497
+    second: M18GUN_test_1
+  - first:
+      213: 8300912696491005652
+    second: M18GUN_test_2
+  - first:
+      213: 8320976179099709059
+    second: M18GUN_test_3
+  - first:
+      213: 8129400280192493297
+    second: M18GUN_test_4
+  - first:
+      213: 6515435637085933972
+    second: M18GUN_test_5
+  - first:
+      213: 767074279252941822
+    second: M18GUN_test_6
+  - first:
+      213: 2621072284824150198
+    second: M18GUN_test_7
+  - first:
+      213: 5652608357830447545
+    second: M18GUN_test_8
+  - first:
+      213: 3467282292761294343
+    second: M18GUN_test_9
+  - first:
+      213: 8666593463336875653
+    second: M18GUN_test_10
+  - first:
+      213: 855677047938404268
+    second: M18GUN_test_11
+  - first:
+      213: 4834186714075147095
+    second: M18GUN_test_12
+  - first:
+      213: 5751698138224740564
+    second: M18GUN_test_13
+  - first:
+      213: -2067548175826449963
+    second: M18GUN_test_14
+  - first:
+      213: -6629744065919983321
+    second: M18GUN_test_15
+  - first:
+      213: 7376121178724402096
+    second: M18GUN_test_16
+  - first:
+      213: 1614329930093811842
+    second: M18GUN_test_17
+  - first:
+      213: -779716846322286077
+    second: M18GUN_test_18
+  - first:
+      213: 4853185987145844772
+    second: M18GUN_test_19
+  - first:
+      213: -2826275150013199846
+    second: M18GUN_test_20
+  - first:
+      213: 44632539649213651
+    second: M18GUN_test_21
+  - first:
+      213: -3539401771378342655
+    second: M18GUN_test_22
+  - first:
+      213: -8041970951999002443
+    second: M18GUN_test_23
+  - first:
+      213: 891244764708495097
+    second: M18GUN_test_24
+  - first:
+      213: -5081312481307608047
+    second: M18GUN_test_25
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: M18GUN_test_0
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 1747
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a6a2ebd3c49d8dc0800000000000000
+      internalID: -3635085755289524570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_1
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1747
+        width: 274
+        height: 109
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2e62eb89b27be5d0800000000000000
+      internalID: -3032203782862508497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_2
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 1745
+        width: 272
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d650e90e14c23370800000000000000
+      internalID: 8300912696491005652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_3
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 1744
+        width: 272
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38ea9bb9fbb0a7370800000000000000
+      internalID: 8320976179099709059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_4
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 1745
+        width: 273
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f6a5d1cb7e61d070800000000000000
+      internalID: 8129400280192493297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_5
+      rect:
+        serializedVersion: 2
+        x: 1982
+        y: 1745
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4919d61113a7b6a50800000000000000
+      internalID: 6515435637085933972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_6
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 1351
+        width: 272
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efbd53b2ef135aa00800000000000000
+      internalID: 767074279252941822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_7
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1350
+        width: 273
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b0a0932b5bef5420800000000000000
+      internalID: 2621072284824150198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_8
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 1351
+        width: 273
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b153e64a59127e40800000000000000
+      internalID: 5652608357830447545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_9
+      rect:
+        serializedVersion: 2
+        x: 1219
+        y: 1352
+        width: 274
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 706f904ffd24e1030800000000000000
+      internalID: 3467282292761294343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_10
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 1349
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 586baea56dce54870800000000000000
+      internalID: 8666593463336875653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_11
+      rect:
+        serializedVersion: 2
+        x: 1982
+        y: 1351
+        width: 273
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cafc2d4ddb9ffdb00800000000000000
+      internalID: 855677047938404268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_12
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 959
+        width: 274
+        height: 110
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75bac5e243b761340800000000000000
+      internalID: 4834186714075147095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_13
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 958
+        width: 273
+        height: 110
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d84920abf222df40800000000000000
+      internalID: 5751698138224740564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_14
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 958
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d98bdf63e79e43e0800000000000000
+      internalID: -2067548175826449963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_15
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 959
+        width: 272
+        height: 110
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 721e51fd5ea6ef3a0800000000000000
+      internalID: -6629744065919983321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_16
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 962
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b38a16b12f3d5660800000000000000
+      internalID: 7376121178724402096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_17
+      rect:
+        serializedVersion: 2
+        x: 1983
+        y: 960
+        width: 272
+        height: 109
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 288d581b480476610800000000000000
+      internalID: 1614329930093811842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_18
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 568
+        width: 272
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 302829dc8a3ed25f0800000000000000
+      internalID: -779716846322286077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_19
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 570
+        width: 274
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4284bb821faf95340800000000000000
+      internalID: 4853185987145844772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_20
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 572
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1a03fda9bd07c8d0800000000000000
+      internalID: -2826275150013199846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_21
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 571
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d4073fee019e9000800000000000000
+      internalID: 44632539649213651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_22
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 570
+        width: 274
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1050b9b67d481eec0800000000000000
+      internalID: -3539401771378342655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_23
+      rect:
+        serializedVersion: 2
+        x: 1983
+        y: 572
+        width: 273
+        height: 108
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b8e610070e256090800000000000000
+      internalID: -8041970951999002443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_24
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 181
+        width: 273
+        height: 109
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fe506834665e5c00800000000000000
+      internalID: 891244764708495097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M18GUN_test_25
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 179
+        width: 274
+        height: 107
+      alignment: 9
+      pivot: {x: 0.15, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11cb6ee583d8b79b0800000000000000
+      internalID: -5081312481307608047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

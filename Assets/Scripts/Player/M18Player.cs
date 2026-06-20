@@ -1,7 +1,7 @@
-// 功能：M18 地面玩家的移动、跳跃、屏幕限制和可调角度射击控制。
-// 技术要点：一个玩家对象挂一个脚本；输入使用新版 Input System 直接读取键盘；射击支持主路角度调节和道具增加额外弹路；外观和参数通过 Inspector 配置并在编辑器中实时显示。
-// 配置：left/right/aim/jump/attack 按键；moveSpeed 移动速度；targetCamera/viewportMin/Max 屏幕限制；jumpHeight/airTime/fallSpeed 跳跃；bulletPrefab/muzzle/shotsPerSecond/bulletSpeed/bulletLifeTime 射击；aimAngle/extraBulletWays 弹路；playerSprite/placeholder/sortingOrder 外观。
-// 版本：v0.4.0
+// 功能：M18 地面玩家的移动、跳跃、屏幕限制、射击和死亡。
+// 技术要点：一个玩家对象挂一个脚本；外观交给对象自己的 SpriteRenderer；死亡动画使用 Inspector 配置的 prefab。
+// 配置：left/right/aim/jump/attack 按键；moveSpeed 移动速度；targetCamera/viewportMin/Max 屏幕限制；jumpHeight/airTime/fallSpeed 跳跃；maxHealth 血量；deathAnimationPrefab 死亡动画；gunTransform 炮塔外观节点；bulletPrefab/muzzle/shotsPerSecond/bulletSpeed/bulletLifeTime 射击；aimAngle/extraBulletWays 弹路。
+// 版本：0.5.0
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -32,7 +32,13 @@ public class M18Player : MonoBehaviour
     [SerializeField] private bool lockGroundYOnStart = true;
     [SerializeField] private float groundY;
 
+    [Header("Health")]
+    [SerializeField] private int maxHealth = 1;
+    [SerializeField] private GameObject deathAnimationPrefab;
+    [SerializeField] private float deathAnimationLifeTime = 1f;
+
     [Header("Shot")]
+    [SerializeField] private Transform gunTransform;
     [SerializeField] private M18Bullet bulletPrefab;
     [SerializeField] private Transform muzzlePoint;
     [SerializeField] private Vector2 muzzleOffset = new Vector2(0.75f, 0.1f);
@@ -47,28 +53,24 @@ public class M18Player : MonoBehaviour
     [SerializeField] private float extraWayAngleOffset = 30f;
     [SerializeField] private float extraMaxAngle = 90f;
 
-    [Header("Visual")]
-    [SerializeField] private Sprite playerSprite;
-    [SerializeField] private bool createPlaceholderWhenSpriteMissing = true;
-    [SerializeField] private Vector2 placeholderSize = new Vector2(1.25f, 0.75f);
-    [SerializeField] private Color placeholderColor = new Color(0.15f, 0.8f, 0.95f, 1f);
-    [SerializeField] private int sortingOrder = 10;
-
-    private static Sprite sharedPlaceholderSprite;
     private SpriteRenderer spriteRenderer;
+    private int currentHealth;
     private float verticalSpeed;
     private float nextFireTime;
     private float currentShotAngle;
+    private int aimCycleDirection = 1;
     private float lastCameraX;
     private bool hasLastCameraX;
     private bool isGrounded = true;
+    private bool isDead;
     private bool keyboardMissingWarningShown;
 
     private void Awake()
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyVisualDefaults();
+        currentHealth = maxHealth;
+        SyncGunRotation();
 
         if (targetCamera == null)
         {
@@ -85,13 +87,13 @@ public class M18Player : MonoBehaviour
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyVisualDefaults();
+        SyncGunRotation();
     }
 
     private void OnEnable()
     {
         CacheComponents();
-        ApplyVisualDefaults();
+        SyncGunRotation();
         ResetCameraFollow();
     }
 
@@ -103,11 +105,13 @@ public class M18Player : MonoBehaviour
     private void OnValidate()
     {
         NormalizeSettings();
+        CacheComponents();
+        SyncGunRotation();
     }
 
     private void Update()
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying || isDead)
         {
             return;
         }
@@ -133,6 +137,27 @@ public class M18Player : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int damage)
+    {
+        if (!Application.isPlaying || isDead)
+        {
+            return;
+        }
+
+        currentHealth -= Mathf.Max(1, damage);
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        isDead = true;
+        SpawnDeathAnimation();
+        Destroy(gameObject);
+    }
+
     private float ReadHorizontalInput(Keyboard keyboard)
     {
         float horizontal = 0f;
@@ -152,14 +177,28 @@ public class M18Player : MonoBehaviour
 
     private void UpdateShotAngle(Keyboard keyboard)
     {
-        if (WasPressedThisFrame(keyboard, aimUpKey))
+        if (WasPressedThisFrame(keyboard, aimUpKey) || WasPressedThisFrame(keyboard, aimDownKey))
         {
-            currentShotAngle = Mathf.Min(currentShotAngle + aimAngleStep, GetPrimaryMaxAngle());
+            CycleShotAngle();
+            SyncGunRotation();
+        }
+    }
+
+    private void CycleShotAngle()
+    {
+        currentShotAngle += aimAngleStep * aimCycleDirection;
+
+        if (currentShotAngle >= GetPrimaryMaxAngle())
+        {
+            currentShotAngle = GetPrimaryMaxAngle();
+            aimCycleDirection = -1;
+            return;
         }
 
-        if (WasPressedThisFrame(keyboard, aimDownKey))
+        if (currentShotAngle <= baseShotAngle)
         {
-            currentShotAngle = Mathf.Max(currentShotAngle - aimAngleStep, baseShotAngle);
+            currentShotAngle = baseShotAngle;
+            aimCycleDirection = 1;
         }
     }
 
@@ -301,10 +340,12 @@ public class M18Player : MonoBehaviour
 
     private void NormalizeSettings()
     {
+        maxHealth = Mathf.Max(1, maxHealth);
         moveSpeed = Mathf.Max(0f, moveSpeed);
         jumpHeight = Mathf.Max(0.01f, jumpHeight);
         airTime = Mathf.Max(0.01f, airTime);
         fallSpeed = Mathf.Max(0.01f, fallSpeed);
+        deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
         shotsPerSecond = Mathf.Max(0.01f, shotsPerSecond);
         bulletSpeed = Mathf.Max(0f, bulletSpeed);
         bulletLifeTime = Mathf.Max(0.01f, bulletLifeTime);
@@ -315,7 +356,14 @@ public class M18Player : MonoBehaviour
         extraWayAngleOffset = Mathf.Max(0f, extraWayAngleOffset);
         extraMaxAngle = Mathf.Max(primaryMaxAngle, extraMaxAngle);
         currentShotAngle = Mathf.Clamp(currentShotAngle, baseShotAngle, GetPrimaryMaxAngle());
-        placeholderSize = new Vector2(Mathf.Max(0.01f, placeholderSize.x), Mathf.Max(0.01f, placeholderSize.y));
+        if (currentShotAngle <= baseShotAngle)
+        {
+            aimCycleDirection = 1;
+        }
+        else if (currentShotAngle >= GetPrimaryMaxAngle())
+        {
+            aimCycleDirection = -1;
+        }
     }
 
     private float GetPrimaryMaxAngle()
@@ -334,6 +382,23 @@ public class M18Player : MonoBehaviour
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
+
+        if (gunTransform == null)
+        {
+            gunTransform = transform.Find("Player_M18_gun");
+        }
+    }
+
+    private void SyncGunRotation()
+    {
+        if (gunTransform == null)
+        {
+            return;
+        }
+
+        Vector3 euler = gunTransform.localEulerAngles;
+        euler.z = currentShotAngle;
+        gunTransform.localEulerAngles = euler;
     }
 
     private void ResetCameraFollow()
@@ -359,28 +424,18 @@ public class M18Player : MonoBehaviour
         return deltaX;
     }
 
-    private void ApplyVisualDefaults()
+    private void SpawnDeathAnimation()
     {
-        CacheComponents();
-
-        if (spriteRenderer == null)
+        if (deathAnimationPrefab == null)
         {
             return;
         }
 
-        if (playerSprite != null)
+        GameObject effect = Instantiate(deathAnimationPrefab, transform.position, transform.rotation);
+        if (deathAnimationLifeTime > 0f)
         {
-            spriteRenderer.sprite = playerSprite;
-            spriteRenderer.color = Color.white;
+            Destroy(effect, deathAnimationLifeTime);
         }
-        else if (createPlaceholderWhenSpriteMissing)
-        {
-            spriteRenderer.sprite = GetPlaceholderSprite();
-            spriteRenderer.color = placeholderColor;
-            transform.localScale = new Vector3(placeholderSize.x, placeholderSize.y, 1f);
-        }
-
-        spriteRenderer.sortingOrder = sortingOrder;
     }
 
     private void LogMissingKeyboardWarningOnce()
@@ -430,22 +485,5 @@ public class M18Player : MonoBehaviour
         }
 
         return Mathf.Clamp(value, min, max);
-    }
-
-    private static Sprite GetPlaceholderSprite()
-    {
-        if (sharedPlaceholderSprite != null)
-        {
-            return sharedPlaceholderSprite;
-        }
-
-        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-        texture.hideFlags = HideFlags.HideAndDontSave;
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        sharedPlaceholderSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
-        sharedPlaceholderSprite.hideFlags = HideFlags.HideAndDontSave;
-        return sharedPlaceholderSprite;
     }
 }

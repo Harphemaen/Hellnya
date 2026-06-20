@@ -122,15 +122,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9509e191d964bf6aee7ef656c6fb37a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySprite: {fileID: 21300000, guid: 30d9ac3e5473a254fbe706ad05e2e7b2, type: 3}
-  sortingOrder: 8
   maxHealth: 1
   destroyWhenHealthZero: 1
+  deathAnimationPrefab: {fileID: 0}
+  deathAnimationLifeTime: 1
   moveSpeed: 1.2
   autoConfigureHitBox: 1
   hitBoxSize: {x: 0.9, y: 0.7}
   hitBoxOffset: {x: 0, y: 0}
-  canShoot: 1
+  canShoot: 0
   bulletPrefab: {fileID: 0}
   muzzlePoint: {fileID: 0}
   muzzleOffset: {x: -0.6, y: 0}
@@ -140,12 +140,10 @@ MonoBehaviour:
   shotIntervalRandom: 0.25
   initialShotDelay: 0.5
   shotAngle: 180
-  bulletSprite: {fileID: 21300000, guid: bae349a2528b8054181f9f1887e36190, type: 3}
-  bulletSortingOrder: 15
   flySpeed: 3
   stopScreenPosition: {x: 0.75, y: 0.5}
   useRandomStopScreenPosition: 0
   randomStopScreenMin: {x: 0.65, y: 0.35}
   randomStopScreenMax: {x: 0.85, y: 0.65}
-  stopSeconds: 2
-  shootOnStop: 1
+  stopSeconds: 0
+  shootOnStop: 0

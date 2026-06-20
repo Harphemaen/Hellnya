@@ -1,7 +1,7 @@
-// 功能：敌人子弹的基础飞行与生命周期控制。
-// 技术要点：由敌人脚本生成并初始化方向、速度、生命周期和外观；编辑模式下可直接看到占位图。
-// 配置：direction 初始方向；speed 速度；lifeTime 存活时间；bulletSprite 外观；sortingOrder 层级。
-// 版本：v0.1.0
+// 功能：敌人子弹的飞行、命中销毁动画和自然生命周期。
+// 技术要点：外观交给对象自己的 SpriteRenderer；自然超时销毁不播放动画，命中玩家时才播放。
+// 配置：direction 初始方向；speed 速度；lifeTime 存活时间；deathAnimationPrefab 命中动画；deathAnimationLifeTime 动画对象自动销毁时间。
+// 版本：0.2.0
 
 using UnityEngine;
 
@@ -16,20 +16,19 @@ public class EnemyBullet : MonoBehaviour
     [SerializeField] private float speed = 4f;
     [SerializeField] private float lifeTime = 4f;
 
-    [Header("Visual")]
-    [SerializeField] private Sprite bulletSprite;
-    [SerializeField] private int sortingOrder = 15;
+    [Header("Death Animation")]
+    [SerializeField] private GameObject deathAnimationPrefab;
+    [SerializeField] private float deathAnimationLifeTime = 1f;
 
-    private SpriteRenderer spriteRenderer;
     private BoxCollider2D hitBox;
     private Rigidbody2D body;
     private float lifeTimer;
+    private bool hasHit;
 
     private void Awake()
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyVisualDefaults();
         FaceMoveDirection();
     }
 
@@ -37,13 +36,11 @@ public class EnemyBullet : MonoBehaviour
     {
         NormalizeSettings();
         CacheComponents();
-        ApplyVisualDefaults();
     }
 
     private void OnEnable()
     {
         CacheComponents();
-        ApplyVisualDefaults();
     }
 
     private void OnValidate()
@@ -67,16 +64,41 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    public void Init(Vector2 newDirection, float newSpeed, float newLifeTime, Sprite newBulletSprite, int newSortingOrder)
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        M18Player player = other.GetComponent<M18Player>();
+        if (player == null)
+        {
+            return;
+        }
+
+        if (DestroyByHit())
+        {
+            player.TakeDamage(1);
+        }
+    }
+
+    public void Init(Vector2 newDirection, float newSpeed, float newLifeTime)
     {
         direction = newDirection.sqrMagnitude > 0.0001f ? newDirection.normalized : Vector2.left;
         speed = Mathf.Max(0f, newSpeed);
         lifeTime = Mathf.Max(0.01f, newLifeTime);
-        bulletSprite = newBulletSprite;
-        sortingOrder = newSortingOrder;
         lifeTimer = 0f;
-        ApplyVisualDefaults();
+        hasHit = false;
         FaceMoveDirection();
+    }
+
+    public bool DestroyByHit()
+    {
+        if (hasHit)
+        {
+            return false;
+        }
+
+        hasHit = true;
+        SpawnDeathAnimation();
+        Destroy(gameObject);
+        return true;
     }
 
     private void NormalizeSettings()
@@ -84,20 +106,11 @@ public class EnemyBullet : MonoBehaviour
         direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.left;
         speed = Mathf.Max(0f, speed);
         lifeTime = Mathf.Max(0.01f, lifeTime);
+        deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
     }
 
     private void CacheComponents()
     {
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
-
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        }
-
         if (hitBox == null)
         {
             hitBox = GetComponent<BoxCollider2D>();
@@ -124,15 +137,6 @@ public class EnemyBullet : MonoBehaviour
         body.gravityScale = 0f;
     }
 
-    private void ApplyVisualDefaults()
-    {
-        CacheComponents();
-
-        spriteRenderer.sprite = bulletSprite;
-        spriteRenderer.color = Color.white;
-        spriteRenderer.sortingOrder = sortingOrder;
-    }
-
     private void FaceMoveDirection()
     {
         if (direction.sqrMagnitude <= 0.0001f)
@@ -144,4 +148,17 @@ public class EnemyBullet : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
+    private void SpawnDeathAnimation()
+    {
+        if (deathAnimationPrefab == null)
+        {
+            return;
+        }
+
+        GameObject effect = Instantiate(deathAnimationPrefab, transform.position, transform.rotation);
+        if (deathAnimationLifeTime > 0f)
+        {
+            Destroy(effect, deathAnimationLifeTime);
+        }
+    }
 }
