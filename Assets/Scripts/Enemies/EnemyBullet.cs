@@ -12,9 +12,9 @@ using UnityEngine;
 public class EnemyBullet : MonoBehaviour
 {
     [Header("Move")]
-    [SerializeField] private Vector2 direction = Vector2.left;
-    [SerializeField] private float speed = 4f;
-    [SerializeField] private float lifeTime = 4f;
+    [SerializeField] protected Vector2 direction = Vector2.left;
+    [SerializeField] protected float speed = 4f;
+    [SerializeField] protected float lifeTime = 4f;
 
     [Header("Death Animation")]
     [SerializeField] private GameObject deathAnimationPrefab;
@@ -23,33 +23,33 @@ public class EnemyBullet : MonoBehaviour
 
     private BoxCollider2D hitBox;
     private Rigidbody2D body;
-    private float lifeTimer;
+    protected float lifeTimer;
     private bool hasHit;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         NormalizeSettings();
         CacheComponents();
         FaceMoveDirection();
     }
 
-    private void Reset()
+    protected virtual void Reset()
     {
         NormalizeSettings();
         CacheComponents();
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         CacheComponents();
     }
 
-    private void OnValidate()
+    protected virtual void OnValidate()
     {
         NormalizeSettings();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (!Application.isPlaying)
         {
@@ -108,7 +108,7 @@ public class EnemyBullet : MonoBehaviour
         return true;
     }
 
-    private void NormalizeSettings()
+    protected void NormalizeSettings()
     {
         direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.left;
         speed = Mathf.Max(0f, speed);
@@ -121,7 +121,7 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    private void CacheComponents()
+    protected void CacheComponents()
     {
         if (hitBox == null)
         {
@@ -149,7 +149,7 @@ public class EnemyBullet : MonoBehaviour
         body.gravityScale = 0f;
     }
 
-    private void FaceMoveDirection()
+    protected void FaceMoveDirection()
     {
         if (direction.sqrMagnitude <= 0.0001f)
         {
