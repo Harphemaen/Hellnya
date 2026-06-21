@@ -18,11 +18,6 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected GameObject deathAnimationPrefab;
     [SerializeField] protected float deathAnimationLifeTime = 1f;
 
-    [Header("Drop")]
-    [SerializeField] protected bool dropPickupOnDeath;
-    [SerializeField] protected PickupItem pickupPrefab;
-    [SerializeField] protected Vector2 pickupDropOffset = Vector2.zero;
-
     [Header("Move")]
     [SerializeField] protected float moveSpeed = 1.2f;
 
@@ -182,7 +177,7 @@ public class EnemyBase : MonoBehaviour
     {
         if (destroyWhenHealthZero)
         {
-            DropPickup();
+            DropPickupIfConfigured();
             SpawnDeathAnimation();
             Destroy(gameObject);
         }
@@ -202,15 +197,15 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    protected void DropPickup()
+    protected void DropPickupIfConfigured()
     {
-        if (!dropPickupOnDeath || pickupPrefab == null)
+        EnemyPickupDropper dropper = GetComponent<EnemyPickupDropper>();
+        if (dropper == null)
         {
             return;
         }
 
-        Vector3 spawnPosition = transform.position + new Vector3(pickupDropOffset.x, pickupDropOffset.y, 0f);
-        Instantiate(pickupPrefab, spawnPosition, Quaternion.identity);
+        dropper.Drop();
     }
 
     protected void ScheduleNextShot(float delay)
