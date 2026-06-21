@@ -18,6 +18,11 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected GameObject deathAnimationPrefab;
     [SerializeField] protected float deathAnimationLifeTime = 1f;
 
+    [Header("Drop")]
+    [SerializeField] protected bool dropPickupOnDeath;
+    [SerializeField] protected PickupItem pickupPrefab;
+    [SerializeField] protected Vector2 pickupDropOffset = Vector2.zero;
+
     [Header("Move")]
     [SerializeField] protected float moveSpeed = 1.2f;
 
@@ -25,6 +30,11 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected bool autoConfigureHitBox = true;
     [SerializeField] protected Vector2 hitBoxSize = new Vector2(0.9f, 0.7f);
     [SerializeField] protected Vector2 hitBoxOffset = Vector2.zero;
+
+    [Header("Touch Damage")]
+    [SerializeField] protected bool damagePlayerOnTouch;
+    [SerializeField] protected int touchDamage = 1;
+    [SerializeField] protected bool destroySelfOnTouchPlayer;
 
     [Header("Shot")]
     [SerializeField] protected bool canShoot = true;
@@ -135,6 +145,13 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
+        M18Player player = other.GetComponent<M18Player>();
+        if (player != null)
+        {
+            TouchPlayer(player);
+            return;
+        }
+
         M18Bullet playerBullet = other.GetComponent<M18Bullet>();
         if (playerBullet == null)
         {
@@ -165,9 +182,35 @@ public class EnemyBase : MonoBehaviour
     {
         if (destroyWhenHealthZero)
         {
+            DropPickup();
             SpawnDeathAnimation();
             Destroy(gameObject);
         }
+    }
+
+    protected virtual void TouchPlayer(M18Player player)
+    {
+        if (!damagePlayerOnTouch || player == null)
+        {
+            return;
+        }
+
+        player.TakeDamage(touchDamage);
+        if (destroySelfOnTouchPlayer)
+        {
+            Die();
+        }
+    }
+
+    protected void DropPickup()
+    {
+        if (!dropPickupOnDeath || pickupPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = transform.position + new Vector3(pickupDropOffset.x, pickupDropOffset.y, 0f);
+        Instantiate(pickupPrefab, spawnPosition, Quaternion.identity);
     }
 
     protected void ScheduleNextShot(float delay)
@@ -203,6 +246,7 @@ public class EnemyBase : MonoBehaviour
         deathAnimationLifeTime = Mathf.Max(0f, deathAnimationLifeTime);
         moveSpeed = Mathf.Max(0f, moveSpeed);
         hitBoxSize = new Vector2(Mathf.Max(0.01f, hitBoxSize.x), Mathf.Max(0.01f, hitBoxSize.y));
+        touchDamage = Mathf.Max(1, touchDamage);
         bulletSpeed = Mathf.Max(0f, bulletSpeed);
         bulletLifeTime = Mathf.Max(0.01f, bulletLifeTime);
         shotInterval = Mathf.Max(0.01f, shotInterval);

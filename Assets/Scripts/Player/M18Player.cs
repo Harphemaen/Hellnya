@@ -326,6 +326,12 @@ public class M18Player : MonoBehaviour
         extraBulletWays = Mathf.Clamp(count, 0, maxExtraBulletWays);
     }
 
+    public void AddShotsPerSecond(float amount)
+    {
+        shotsPerSecond += amount;
+        NormalizeSettings();
+    }
+
     private float GetJumpStartSpeed()
     {
         float safeAirTime = Mathf.Max(0.01f, airTime);
