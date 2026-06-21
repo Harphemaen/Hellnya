@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 8
-  m_Sprite: {fileID: 21300000, guid: 30d9ac3e5473a254fbe706ad05e2e7b2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 597be5db168cd3443b7302025b508c0c, type: 3}
   m_Color: {r: 0.75, g: 0.95, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.77, y: 1.03}
+    oldSize: {x: 1.12, y: 1.03}
     newSize: {x: 1.77, y: 1.03}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9446615e914c4899a87c51182cc4a24c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   maxHealth: 3
   destroyWhenHealthZero: 1
   deathAnimationPrefab: {fileID: 100000, guid: a8fd6302e95f47e6a23c271edc7ac101, type: 3}
