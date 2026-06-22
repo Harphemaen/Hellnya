@@ -58,7 +58,6 @@ public class M18Player : MonoBehaviour
     private float verticalSpeed;
     private float nextFireTime;
     private float currentShotAngle;
-    private int aimCycleDirection = 1;
     private float lastCameraX;
     private bool hasLastCameraX;
     private bool isGrounded = true;
@@ -177,29 +176,23 @@ public class M18Player : MonoBehaviour
 
     private void UpdateShotAngle(Keyboard keyboard)
     {
-        if (WasPressedThisFrame(keyboard, aimUpKey) || WasPressedThisFrame(keyboard, aimDownKey))
+        bool aimUpPressed = WasPressedThisFrame(keyboard, aimUpKey);
+        bool aimDownPressed = WasPressedThisFrame(keyboard, aimDownKey);
+        if (aimUpPressed == aimDownPressed)
         {
-            CycleShotAngle();
-            SyncGunRotation();
-        }
-    }
-
-    private void CycleShotAngle()
-    {
-        currentShotAngle += aimAngleStep * aimCycleDirection;
-
-        if (currentShotAngle >= GetPrimaryMaxAngle())
-        {
-            currentShotAngle = GetPrimaryMaxAngle();
-            aimCycleDirection = -1;
             return;
         }
 
-        if (currentShotAngle <= baseShotAngle)
-        {
-            currentShotAngle = baseShotAngle;
-            aimCycleDirection = 1;
-        }
+        AdjustShotAngle(aimUpPressed ? 1f : -1f);
+        SyncGunRotation();
+    }
+
+    private void AdjustShotAngle(float direction)
+    {
+        currentShotAngle = Mathf.Clamp(
+            currentShotAngle + aimAngleStep * direction,
+            baseShotAngle,
+            GetPrimaryMaxAngle());
     }
 
     private void Move(float horizontal, bool jumpPressed, float cameraDeltaX)
@@ -362,14 +355,6 @@ public class M18Player : MonoBehaviour
         extraWayAngleOffset = Mathf.Max(0f, extraWayAngleOffset);
         extraMaxAngle = Mathf.Max(primaryMaxAngle, extraMaxAngle);
         currentShotAngle = Mathf.Clamp(currentShotAngle, baseShotAngle, GetPrimaryMaxAngle());
-        if (currentShotAngle <= baseShotAngle)
-        {
-            aimCycleDirection = 1;
-        }
-        else if (currentShotAngle >= GetPrimaryMaxAngle())
-        {
-            aimCycleDirection = -1;
-        }
     }
 
     private float GetPrimaryMaxAngle()
